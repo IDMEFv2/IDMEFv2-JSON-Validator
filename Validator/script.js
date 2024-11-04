@@ -218,11 +218,12 @@ function saveFileAs() {
   let format = document.getElementById("format").value;
   let fileName = document.getElementById("fileName").value;
   
-  if(format == ".json") {
-    var defaultFilename = `${fileName}.json`;
-  } else {
-    var defaultFilename = `${fileName}.txt`;
+  if (fileName === "") {
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+    fileName = `IDMEFv2_${timestamp}`;
   }
+
+  var defaultFilename = format === ".json" ? `${fileName}.json` : `${fileName}.txt`;
 
   var textBlob = new Blob([jsonString], { type: 'application/json' });
   var downloadLink = document.createElement("a");
@@ -238,7 +239,6 @@ function saveFileAs() {
   document.getElementById('save-modal').style.display = "none";
   document.getElementById('overlay').style.display = "none";
   document.getElementById('fileName').value = "";
-
 }
 
 // Copy the current json to clipboard and show the popup
