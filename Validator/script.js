@@ -68,6 +68,20 @@ var jsonbase = {
   ]
 };
 
+const toggleButton = document.getElementById('dark-mode-toggle');
+const icon = toggleButton.querySelector('i');
+
+toggleButton.addEventListener('click', () => {
+  if (icon.classList.contains('fa-sun')) {
+    icon.classList.remove('fa-sun');
+    icon.classList.add('fa-moon');
+  } else {
+    icon.classList.remove('fa-moon');
+    icon.classList.add('fa-sun');
+  }
+    document.body.classList.toggle('dark-mode');
+});
+
 // Initializing the editor observer and setting the first json
 initObserver();
 editor.set(json);
@@ -150,6 +164,7 @@ function startObserver() {
     observer.observe(container, { childList: true, subtree: true });
   }
 }
+
 // ---------------------------
 
 // Functions related to the copy pop-up
@@ -159,7 +174,6 @@ function showPopUp() {
   popUp.classList.remove('pop-up-hidden');
 }
 
-// Funzione per nascondere il pop-up con animazione verso l'alto
 function hidePopUp() {
   popUp.classList.remove('pop-up-visible');
   popUp.classList.add('pop-up-hidden');
@@ -167,8 +181,11 @@ function hidePopUp() {
 
 // ---------------------------
 
-// Funzioni principali
-function printJson1() {
+// Functions for the custom buttons
+
+// Prints the only available exercise
+// It will be updated to the definitive version once more are available
+function printExercise() {
   cleanResult()
   clearErrorHighlights();
   stopObserver();
@@ -178,7 +195,9 @@ function printJson1() {
   startObserver();
 }
 
-function printJson2() {
+// Prints one of the two available examples
+// It will be updated to the definitive version once the github repository is fixed
+function printExample() {
   cleanResult();
   clearErrorHighlights();
   stopObserver(); 
@@ -192,30 +211,37 @@ function printJson2() {
   });
 }
 
-
+// Save the file in the chosen format and close the modal
 function saveFileAs() {
-  var currentJson = editor.get(); // Ottieni l'oggetto JSON attuale
-  var jsonString = JSON.stringify(currentJson, null, 2); // Serializza il JSON in una stringa formattata
+  var currentJson = editor.get();
+  var jsonString = JSON.stringify(currentJson, null, 2);
+  let format = document.getElementById("format").value;
+  let fileName = document.getElementById("fileName").value;
+  
+  if(format == ".json") {
+    var defaultFilename = `${fileName}.json`;
+  } else {
+    var defaultFilename = `${fileName}.txt`;
+  }
 
-  // Genera un timestamp corrente
-  var timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Sostituisce ':' e '.' per evitare problemi nel nome del file
-  var defaultFilename = `IDMFv2_${timestamp}.json`; // Crea il nome del file
-
-  // Crea un Blob con i dati JSON
   var textBlob = new Blob([jsonString], { type: 'application/json' });
   var downloadLink = document.createElement("a");
-  downloadLink.download = defaultFilename; // Imposta il nome del file di download
-  downloadLink.href = window.URL.createObjectURL(textBlob); // Imposta l'URL del Blob
+  downloadLink.download = defaultFilename;
+  downloadLink.href = window.URL.createObjectURL(textBlob);
 
-  // Simula un clic per avviare il download
-  document.body.appendChild(downloadLink); // Aggiungi il link al documento
-  downloadLink.click(); // Simula un clic
-  document.body.removeChild(downloadLink); // Rimuovi il link dal documento
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 
-  // Libera l'oggetto URL
   URL.revokeObjectURL(downloadLink.href);
+
+  document.getElementById('save-modal').style.display = "none";
+  document.getElementById('overlay').style.display = "none";
+  document.getElementById('fileName').value = "";
+
 }
 
+// Copy the current json to clipboard and show the popup
 function copy_text() {
   var currentJson = editor.get(); 
 
@@ -248,6 +274,7 @@ function clear_text() {
   startObserver();
 }
 
+// Change the way the json is desplayed
 function changeMode() {
   var modeValue = document.getElementById("mode").value;
   mode = modeValue;
@@ -285,33 +312,9 @@ function validate() {
     }
 }
 
-// function validate() {
-//   let result = document.getElementById("idmefv2_text_result");
-//   result.innerHTML = "";
-//   clearErrorHighlights(); // Rimuovi le evidenziazioni precedenti
+// ---------------------
 
-//   if (json) {
-//       validationPerformed = true; // Imposta il flag
-//       stopObserver(); // Ferma l'observer prima della validazione
-
-//       var valid = ajv_validate(JSON.parse(JSON.stringify(editor.get())));
-//       if (!valid) {
-//           ajv_validate.errors.forEach(function(err) {
-//               let path = err.dataPath ? err.dataPath.substr(1) : "Root";
-//               if (err.keyword === "additionalProperties") {
-//                   path += "." + err.params.additionalProperty;
-//               }
-//               result.innerHTML += "Path: " + path + ", Error: " + err.message + "<br/>";
-//           });
-//           findErrors(); // Evidenzia gli errori
-//       } else {
-//           result.innerHTML = "<p style=\"text-align: center\">No errors</p>";
-//       }
-
-//       startObserver(); // Riavvia l'observer dopo la validazione
-//   }
-// }
-
+// Functions related to highlighting the errors in the editor
 
 function findErrors() {
   ajv_validate.errors.forEach(highlightError);
@@ -361,6 +364,8 @@ function clearErrorHighlights() {
   });
 }
 
+// -----------------
+
 function cleanResult() {
   let result = document.getElementById("idmefv2_text_result");
 
@@ -387,6 +392,7 @@ function openCloseInfo() {
   }
 }
 
+// Look for a definition in the schema
 function findSchemaInfo(path) {
 
   if (path.startsWith('Root.')) {
@@ -418,31 +424,24 @@ function findSchemaInfo(path) {
   return JSON.stringify(schemaPart, null, 2);
 }
 
+// Open Schema details
 function showSchema(path) {
-  console.log(path)
   const schemaInfo = findSchemaInfo(path);
   document.getElementById('schemaDefinition').innerText = schemaInfo;
   document.getElementById('schemaModal').style.display = "block";
   document.getElementById('overlay').style.display = "block";
 }
 
+// Open Save modal
+function openSave() {
+  document.getElementById('save-modal').style.display = "block";
+  document.getElementById('overlay').style.display = "block";
+}
+
+// Close all modals and remove the overlay
 function closeModal() {
   document.getElementById('schemaModal').style.display = "none"; 
   document.getElementById('overlay').style.display = "none";
+  document.getElementById('save-modal').style.display = "none";
+  document.getElementById('fileName').value = "";
 }
-
-
-
-const toggleButton = document.getElementById('dark-mode-toggle');
-const icon = toggleButton.querySelector('i');
-
-toggleButton.addEventListener('click', () => {
-  if (icon.classList.contains('fa-sun')) {
-    icon.classList.remove('fa-sun');
-    icon.classList.add('fa-moon');
-  } else {
-    icon.classList.remove('fa-moon');
-    icon.classList.add('fa-sun');
-  }
-    document.body.classList.toggle('dark-mode');
-});
