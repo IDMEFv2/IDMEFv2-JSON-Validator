@@ -1,5 +1,9 @@
-name: Copy Validator to main website PP
-on: [push, workflow_dispatch]
+name: Copy Validator to main website
+on:
+  push:
+    tags:
+      - '**'
+    workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,8 +22,8 @@ jobs:
 
       - name: "Copy files"
         run: |
-          rm -rf IDMEFv2.github.io/Validator-PP
-          cp -rf IDMEFv2-JSON-Validator/Validator IDMEFv2.github.io/Validator-PP
+          rm -rf IDMEFv2.github.io/Validator
+          cp -rf IDMEFv2-JSON-Validator/Validator IDMEFv2.github.io/Validator
 
       - name: "Commit and push"
         run: |
@@ -27,5 +31,5 @@ jobs:
           git config --global user.email "contact@bytesnai.tech"
           git config --global user.name "Bytes 'n AI"
           git add --all
-          git commit -m "Update Validator-PP"
+          git commit -m "Update Validator"
           git push
