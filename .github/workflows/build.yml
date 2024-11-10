@@ -1,5 +1,9 @@
 name: Copy Validator to main website PP
-on: [push, workflow_dispatch]
+on:
+  push:
+    paths:
+      - 'Validator/**'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
