@@ -1,0 +1,31 @@
+name: Copy Validator to main website
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out the repository"
+        uses: actions/checkout@v4
+        with:
+          path: IDMEFv2-JSON-Validator
+
+      - name: "Check out the repository of the main website"
+        uses: actions/checkout@v4
+        with:
+          path: IDMEFv2.github.io
+          repository: IDMEFv2/IDMEFv2.github.io
+          token: ${{ secrets.GH_PAT }}
+
+      - name: "Copy files"
+        run: |
+          rm -rf IDMEFv2.github.io/Validator-PP
+          cp -rf IDMEFv2-JSON-Validator/Validator IDMEFv2.github.io/Validator-PP
+
+      - name: "Commit and push"
+        run: |
+          cd IDMEFv2.github.io
+          git config --global user.email "contact@bytesnai.tech"
+          git config --global user.name "Bytes 'n AI"
+          git add --all
+          git commit -m "Update Validator-PP"
+          git push
