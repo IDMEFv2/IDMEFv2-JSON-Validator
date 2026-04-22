@@ -12,6 +12,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: IDMEFv2-JSON-Validator
+          submodules: true
 
       - name: "Check out the repository of the main website"
         uses: actions/checkout@v4
@@ -20,10 +21,18 @@ jobs:
           repository: IDMEFv2/IDMEFv2.github.io
           token: ${{ secrets.GH_PAT }}
 
+      - name: "Generate manifests"
+        shell: pwsh
+        run: |
+          Set-Location IDMEFv2-JSON-Validator
+          .\scripts\generate-manifests.ps1
+
       - name: "Copy files"
         run: |
           rm -rf IDMEFv2.github.io/Validator-PP
           cp -rf IDMEFv2-JSON-Validator/Validator IDMEFv2.github.io/Validator-PP
+          cp -rf IDMEFv2-JSON-Validator/drafts/IDMEFv2 IDMEFv2.github.io/Validator-PP/drafts
+          cp -rf IDMEFv2-JSON-Validator/examples IDMEFv2.github.io/Validator-PP/examples
 
       - name: "Commit and push"
         run: |
