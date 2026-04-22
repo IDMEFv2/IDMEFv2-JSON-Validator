@@ -31,10 +31,11 @@ jobs:
         run: |
           rm -rf IDMEFv2.github.io/Validator-PP
           mkdir -p IDMEFv2.github.io/Validator-PP
-          cp -rf IDMEFv2-JSON-Validator/Validator IDMEFv2.github.io/Validator-PP
-          mkdir -p IDMEFv2.github.io/Validator-PP/drafts
-          cp -rf IDMEFv2-JSON-Validator/drafts/IDMEFv2 IDMEFv2.github.io/Validator-PP/drafts/IDMEFv2
-          cp -rf IDMEFv2-JSON-Validator/examples IDMEFv2.github.io/Validator-PP/examples
+          cp -rf IDMEFv2-JSON-Validator/Validator/. IDMEFv2.github.io/Validator-PP/
+          mkdir -p IDMEFv2.github.io/Validator-PP/drafts/IDMEFv2
+          cp -rf IDMEFv2-JSON-Validator/drafts/IDMEFv2/. IDMEFv2.github.io/Validator-PP/drafts/IDMEFv2/
+          mkdir -p IDMEFv2.github.io/Validator-PP/examples
+          cp -rf IDMEFv2-JSON-Validator/examples/. IDMEFv2.github.io/Validator-PP/examples/
 
       - name: "Commit and push"
         run: |
