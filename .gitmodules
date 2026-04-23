@@ -1,6 +1,6 @@
 [submodule "drafts"]
-	path = drafts
+	path = Validator/drafts
 	url = https://github.com/IDMEFv2/IDMEFv2-Drafts-IETF.git
 [submodule "examples"]
-	path = examples
+	path = Validator/examples
 	url = https://github.com/IDMEFv2/IDMEFv2-Examples.git

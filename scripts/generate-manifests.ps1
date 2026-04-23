@@ -1,6 +1,6 @@
 param(
-    [string]$ExamplesRoot = (Join-Path $PSScriptRoot "..\examples"),
-    [string]$DraftsRoot = (Join-Path $PSScriptRoot "..\drafts\IDMEFv2"),
+    [string]$ExamplesRoot = (Join-Path $PSScriptRoot "..\Validator\examples"),
+    [string]$DraftsRoot = (Join-Path $PSScriptRoot "..\Validator\drafts\IDMEFv2"),
     [string]$ExamplesOutputPath = (Join-Path $PSScriptRoot "..\Validator\examples-manifest.json"),
     [string]$DraftsOutputPath = (Join-Path $PSScriptRoot "..\Validator\drafts-manifest.json")
 )
@@ -47,9 +47,10 @@ foreach ($folder in $exampleVersionFolders) {
 }
 
 $draftFolders = Get-ChildItem -Path $DraftsRoot -Directory |
-    Where-Object { $_.Name -eq "latest-stable" -or $_.Name -match "^\d+$" -or $_.Name -match "^\d+-Dev$" } |
+    Where-Object { $_.Name -eq "latest-stable" -or $_.Name -eq "latest-dev" -or $_.Name -match "^\d+$" -or $_.Name -match "^\d+-Dev$" } |
     Sort-Object @{ Expression = {
         if ($_.Name -eq "latest-stable") { return -1 }
+        if ($_.Name -eq "latest-dev") { return 0 }
         if ($_.Name -match "^(\d+)-Dev$") { return ([int]$Matches[1] * 10) + 1 }
         if ($_.Name -match "^\d+$") { return [int]$_.Name * 10 }
         return 9999
