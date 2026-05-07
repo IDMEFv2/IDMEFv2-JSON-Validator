@@ -32,9 +32,10 @@ if (-not (Test-Path -Path $DraftsRoot -PathType Container)) {
 $examplesManifest = [ordered]@{}
 
 $exampleVersionFolders = Get-ChildItem -Path $ExamplesRoot -Directory |
-    Where-Object { $_.Name -eq "latest" -or $_.Name -match "^V\d+$" } |
+    Where-Object { $_.Name -eq "latest" -or $_.Name -eq "latest-dev" -or $_.Name -match "^V\d+$" } |
     Sort-Object @{ Expression = {
         if ($_.Name -eq "latest") { return -1 }
+        if ($_.Name -eq "latest-dev") { return 0 }
         return [int]($_.Name -replace "^V", "")
     } }
 
