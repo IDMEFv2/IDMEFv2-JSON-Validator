@@ -39,5 +39,9 @@ jobs:
           git config --global user.email "contact@bytesnai.tech"
           git config --global user.name "Bytes 'n AI"
           git add --all
-          git commit -m "Update Validator"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update Validator"
+            git push
+          fi
